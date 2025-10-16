@@ -1,0 +1,56 @@
+{% extends "clinica/base.html" %}
+{% block title %}Formulario{% endblock %}
+{% block content %}
+<div class="sv-card p-4">
+  <h4 class="mb-3"><i class="bi bi-ui-checks-grid me-2 text-primary"></i>{{ page_title|default:'Registro' }}</h4>
+
+  <div class="alert alert-info">
+    <strong>Ayuda de llenado:</strong>
+    <ul class="mb-0">
+      <li>Fechas: acepta <code>dd/mm/aaaa</code>, <code>dd-mm-aaaa</code> o <code>aaaa-mm-dd</code>. Se normaliza automáticamente.</li>
+      <li>Teléfono: ingresa sólo números, sin espacios ni guiones.</li>
+      <li>RUT: con o sin puntos/guion; se sanitiza al guardar.</li>
+    </ul>
+  </div>
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+    <div class="row g-3">
+      {% for field in form %}
+      <div class="col-md-6">
+        <label class="form-label">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
+        {% if field.field.widget.input_type == "date" %}
+          <input type="text" name="{{ field.name }}" value="{{ field.value|default:'' }}" class="form-control" placeholder="dd/mm/aaaa">
+        {% else %}
+          {{ field }}
+        {% endif %}
+        {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+        {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+      </div>
+      {% endfor %}
+    </div>
+    <div class="mt-4 d-flex gap-2">
+      <a href="{{ cancel_url }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Volver</a>
+      <button class="btn sv-btn-primary"><i class="bi bi-check2-circle me-1"></i>Guardar</button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+  function toISO(d){
+    if(!d) return d;
+    d = d.trim();
+    const m1 = d.match(/^(\d{2})[\/\-](\d{2})[\/\-](\d{4})$/);
+    const m2 = d.match(/^(\d{4})[\/\-](\d{2})[\/\-](\d{2})$/);
+    if(m1){ const dd=m1[1], mm=m1[2], yyyy=m1[3]; return `${yyyy}-${mm}-${dd}`; }
+    if(m2){ return `${m2[1]}-${m2[2]}-${m2[3]}`; }
+    return d;
+  }
+  document.querySelector("form").addEventListener("submit", function(){
+    this.querySelectorAll("input[placeholder='dd/mm/aaaa']").forEach(el => { el.value = toISO(el.value); });
+    const rut = this.querySelector("input[name='rut']"); if(rut){ rut.value = rut.value.replaceAll('.','').replaceAll('-','').toUpperCase(); }
+    const tel = this.querySelector("input[name='telefono']"); if(tel){ tel.value = tel.value.replace(/[^0-9]/g,''); }
+  });
+</script>
+{% endblock %}

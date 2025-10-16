@@ -1,0 +1,25 @@
+{% extends "clinica/base.html" %}
+{% block title %}Inicio · Salud Vital{% endblock %}
+
+{% block content %}
+<div class="sv-card p-4 mb-3">
+  <h1 class="h4 mb-2"><i class="bi bi-compass me-2 text-primary"></i>Bienvenido</h1>
+  <p class="text-secondary mb-0">Usa los accesos para navegar:</p>
+</div>
+
+<div class="row g-3">
+  {# menu_items llega desde HomeView (views_web.py) #}
+  {% for item in menu_items %}
+    <div class="col-6 col-md-4 col-lg-3">
+      <a class="text-decoration-none" href="{% url item.2 %}">
+        <div class="sv-card p-3 h-100">
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-{{ item.1 }} fs-4 text-primary"></i>
+            <strong class="text-dark">{{ item.0 }}</strong>
+          </div>
+        </div>
+      </a>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

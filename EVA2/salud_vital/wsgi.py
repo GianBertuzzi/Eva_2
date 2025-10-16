@@ -1,16 +1,12 @@
 """
-WSGI config for salud_vital project.
-
-It exposes the WSGI callable as a module-level variable named ``application``.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/5.2/howto/deployment/wsgi/
+Configuración WSGI del proyecto (para servidores como gunicorn/uwsgi).
+La mayoría de despliegues tradicionales usan WSGI.
 """
-
 import os
-
 from django.core.wsgi import get_wsgi_application
 
+# Apunta al módulo de settings de este proyecto
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'salud_vital.settings')
 
+# Objeto WSGI que el servidor va a usar
 application = get_wsgi_application()
